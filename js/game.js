@@ -290,7 +290,7 @@ export class Game {
             rechargeRate: 10, // Per second
             depleteRate: 30,  // Per second
             active: false,
-            speedMultiplier: 1.8,
+            speedMultiplier: 1.8, // Increased to ensure we can reach 60 mph from 40 mph base speed
             trailParticles: [],
             // Add smooth transition for boost deactivation
             currentMultiplier: 1.0,
@@ -493,8 +493,14 @@ export class Game {
                     this.car.speed = Math.min(this.car.speed, maxAirborneSpeed);
                 }
             } else {
-                // Normal boost on ground - use the multiplier approach
-                this.car.speed *= this.boost.currentMultiplier;
+                // Normal boost on ground - with a hard cap of 60 mph
+                const maxBoostSpeed = 60; // Maximum speed with boost is 60 mph
+                
+                // Calculate boosted speed
+                const boostedSpeed = this.car.speed * this.boost.currentMultiplier;
+                
+                // Apply the boost but ensure we don't exceed the maximum boost speed
+                this.car.speed = Math.min(boostedSpeed, maxBoostSpeed);
             }
             
             // Create boost trail effect if multiplier is significant
@@ -634,12 +640,12 @@ export class Game {
             const speedStr = speed.toFixed(1).padStart(5, '0');
             this.speedometer.textContent = `SPEED: ${speedStr} MPH`;
             
-            // Change color based on speed
-            if (speed > 30) {
-                this.speedometer.style.color = '#ff0000'; // Red at high speed
+            // Change color based on speed - adjusted for new speed ranges
+            if (speed > 50) {
+                this.speedometer.style.color = '#ff0000'; // Red at high speed (near boost max)
                 this.speedometer.style.textShadow = '0 0 5px #ff0000, 0 0 10px #ff0000';
-            } else if (speed > 20) {
-                this.speedometer.style.color = '#ffff00'; // Yellow at medium speed
+            } else if (speed > 35) {
+                this.speedometer.style.color = '#ffff00'; // Yellow at medium-high speed (near base max)
                 this.speedometer.style.textShadow = '0 0 5px #ffff00, 0 0 10px #ffff00';
             } else {
                 this.speedometer.style.color = '#ff00ff'; // Magenta at regular speed
@@ -1733,7 +1739,7 @@ export class Game {
             );
             
             const particlePos = carPosition.clone()
-                .add(carDirection.clone().multiplyScalar(2 + Math.random()))
+                .add(carDirection.clone().multiplyScalar(1 + Math.random()))
                 .add(offset);
             
             // Create particle

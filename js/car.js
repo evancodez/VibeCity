@@ -25,7 +25,7 @@ export class Car {
         this.rampHeight = 0;
         
         // Car settings
-        this.maxSpeed = 40;
+        this.maxSpeed = 40; // Changed back to 40 mph as the base maximum speed
         this.acceleration = 25;
         this.braking = 35;
         this.deceleration = 8;
